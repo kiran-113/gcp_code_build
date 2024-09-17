@@ -19,7 +19,7 @@ steps:
   - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
 
 options:
-  logging: 'NONE'  # Or 'NONE', if you do not want logs to be stored
+  logging: 'CLOUD_LOGGING_ONLY'  # Or 'NONE', if you do not want logs to be stored
 
 images:
 - 'gcr.io/$PROJECT_ID/backend:latest'
