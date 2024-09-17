@@ -5,12 +5,8 @@ steps:
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/proxy:latest', './proxy']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/backend:latest']
-  options:
-  logging: NONE
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/proxy:latest']
-  options:
-  logging: NONE
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['create', 'secret', 'generic', 'db-password', '--from-file=db/password.txt']
   env:
@@ -21,6 +17,10 @@ steps:
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
   - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+
+options:
+  logging: 'NONE'  # Or 'NONE', if you do not want logs to be stored
+
 images:
 - 'gcr.io/$PROJECT_ID/backend:latest'
 - 'gcr.io/$PROJECT_ID/proxy:latest'
