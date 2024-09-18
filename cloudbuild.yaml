@@ -1,3 +1,4 @@
+
 steps:
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'install']
@@ -48,9 +49,6 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
     - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
     - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
-
-substitutions:
-  SHORT_SHA: '${SHORT_SHA}'
 
 images:
 - 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME'
