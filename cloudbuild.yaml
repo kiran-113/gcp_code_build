@@ -3,23 +3,16 @@ steps:
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'install']
 
-- name: 'gcr.io/cloud-builders/git'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      TAG=$(date +%Y%m%d-%H%M%S)-$SHORT_SHA
-      echo "TAG_NAME=$TAG" > /workspace/tag.sh
 
 - name: 'gcr.io/cloud-builders/docker'
   env:
     - '. /workspace/tag.sh'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
   env:
     - '. /workspace/tag.sh'
-  args: ['push', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME']
+  args: ['push', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}']
 
 - name: 'bash'
   env:
@@ -29,7 +22,7 @@ steps:
     - '-c'
     - |
       pwd
-      K8S_IMAGE="us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME"
+      K8S_IMAGE="us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}"
       sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$K8S_IMAGE"'|' deployment.yaml
 
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -51,7 +44,7 @@ steps:
     - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
 images:
-- 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME'
+- 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}'
 
 options:
   logging: 'CLOUD_LOGGING_ONLY'
