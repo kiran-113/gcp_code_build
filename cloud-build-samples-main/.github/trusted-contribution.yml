@@ -1,0 +1,6 @@
+annotations:
+  - type: comment
+    text: "/gcbrun"
+trustedContributors:
+  - renovate-bot
+  - dpebot

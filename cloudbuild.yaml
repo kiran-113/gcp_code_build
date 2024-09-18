@@ -1,26 +1,56 @@
 steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend:latest', './backend']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/proxy:latest', './proxy']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/backend:latest']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/proxy:latest']
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['create', 'secret', 'generic', 'db-password', '--from-file=db/password.txt']
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
-- name: 'gcr.io/cloud-builders/kubectl'
-  args: ['apply', '-f', 'k8s/']
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+- name: 'gcr.io/cloud-builders/mvn'
+  args: ['clean', 'install']
 
-options:
-  logging: 'CLOUD_LOGGING_ONLY'  # Or 'NONE', if you do not want logs to be stored
+- name: 'gcr.io/cloud-builders/git'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      TAG=$(date +%Y%m%d-%H%M%S)-$SHORT_SHA
+      echo "TAG_NAME=$TAG" > /workspace/tag.sh
+
+- name: 'gcr.io/cloud-builders/docker'
+  env:
+    - '. /workspace/tag.sh'
+  args: ['build', '-t', 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  env:
+    - '. /workspace/tag.sh'
+  args: ['push', 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME']
+
+- name: 'bash'
+  env:
+    - '. /workspace/tag.sh'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      pwd
+      K8S_IMAGE="northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME"
+      sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$K8S_IMAGE"'|' deployment.yaml
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  env:
+    - '. /workspace/tag.sh'
+  args: ['apply', '-f', 'persistentvolume.yaml']
+  env: 
+    - 'CLOUDSDK_COMPUTE_ZONE=northamerica-northeast1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=csci5409-k8-cluster'
+    - 'CLOUDSDK_CORE_PROJECT=csci5409-k8-417419'
+
+- name: 'gcr.io/cloud-builders/kubectl'
+  env:
+    - '. /workspace/tag.sh'
+  args: ['apply', '-f', 'deployment.yaml']
+  env: 
+    - 'CLOUDSDK_COMPUTE_ZONE=northamerica-northeast1-c'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=csci5409-k8-cluster'
+    - 'CLOUDSDK_CORE_PROJECT=csci5409-k8-417419'
+
+substitutions:
+  SHORT_SHA: '${SHORT_SHA}'
 
 images:
-- 'gcr.io/$PROJECT_ID/backend:latest'
-- 'gcr.io/$PROJECT_ID/proxy:latest'
+- 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME'
