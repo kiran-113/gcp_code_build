@@ -1,8 +1,6 @@
-
 steps:
 - name: 'gcr.io/cloud-builders/mvn'
   args: ['clean', 'install']
-
 
 - name: 'gcr.io/cloud-builders/docker'
   env:
@@ -20,12 +18,10 @@ steps:
     - '-c'
     - |
       pwd
-      K8S_IMAGE="us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}"
+      K8S_IMAGE="$_K8S_IMAGE"
       sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$K8S_IMAGE"'|' deployment.yaml
 
 - name: 'gcr.io/cloud-builders/kubectl'
-  env:
-    - '. /workspace/tag.sh'
   args: ['apply', '-f', 'persistentvolume.yaml']
   env: 
     - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
@@ -33,8 +29,6 @@ steps:
     - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
 - name: 'gcr.io/cloud-builders/kubectl'
-  env:
-    - '. /workspace/tag.sh'
   args: ['apply', '-f', 'deployment.yaml']
   env: 
     - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
@@ -47,6 +41,5 @@ images:
 options:
   logging: 'CLOUD_LOGGING_ONLY'
 
-
-
-# us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a
+substitutions:
+  _K8S_IMAGE: 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}'
