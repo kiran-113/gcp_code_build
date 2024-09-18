@@ -15,8 +15,6 @@ steps:
   args: ['push', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}']
 
 - name: 'bash'
-  env:
-    - '. /workspace/tag.sh'
   entrypoint: 'bash'
   args:
     - '-c'
