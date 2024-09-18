@@ -13,12 +13,12 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   env:
     - '. /workspace/tag.sh'
-  args: ['build', '-t', 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME', '.']
 
 - name: 'gcr.io/cloud-builders/docker'
   env:
     - '. /workspace/tag.sh'
-  args: ['push', 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME']
+  args: ['push', 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME']
 
 - name: 'bash'
   env:
@@ -28,7 +28,7 @@ steps:
     - '-c'
     - |
       pwd
-      K8S_IMAGE="northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME"
+      K8S_IMAGE="us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME"
       sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$K8S_IMAGE"'|' deployment.yaml
 
 - name: 'gcr.io/cloud-builders/kubectl'
@@ -36,21 +36,25 @@ steps:
     - '. /workspace/tag.sh'
   args: ['apply', '-f', 'persistentvolume.yaml']
   env: 
-    - 'CLOUDSDK_COMPUTE_ZONE=northamerica-northeast1-c'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=csci5409-k8-cluster'
-    - 'CLOUDSDK_CORE_PROJECT=csci5409-k8-417419'
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
 - name: 'gcr.io/cloud-builders/kubectl'
   env:
     - '. /workspace/tag.sh'
   args: ['apply', '-f', 'deployment.yaml']
   env: 
-    - 'CLOUDSDK_COMPUTE_ZONE=northamerica-northeast1-c'
-    - 'CLOUDSDK_CONTAINER_CLUSTER=csci5409-k8-cluster'
-    - 'CLOUDSDK_CORE_PROJECT=csci5409-k8-417419'
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
 substitutions:
   SHORT_SHA: '${SHORT_SHA}'
 
 images:
-- 'northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:$TAG_NAME'
+- 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME'
+
+
+
+# us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a
