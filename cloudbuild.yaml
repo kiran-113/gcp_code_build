@@ -5,35 +5,35 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'  
   args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}', '.']  
 
-- name: 'gcr.io/cloud-builders/docker'  
-  args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}']  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}']
 
-- name: 'bash'  
-  entrypoint: 'bash'  
-  args:  
-    - '-c'  
-    - |  
-      pwd  
-      sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}|' deployment.yaml  
+- name: 'bash'
+  entrypoint: 'bash'
+  args:
+    - '-c' 
+    - |
+      pwd
+      sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}|' deployment.yaml
 
-- name: 'gcr.io/cloud-builders/kubectl'  
-  args: ['apply', '-f', 'persistentvolume.yaml']  
-  env:  
-    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'  
-    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'  
-    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'  
+- name: 'gcr.io/cloud-builders/kubectl 
+  args: ['apply', '-f', 'persistentvolume.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
-- name: 'gcr.io/cloud-builders/kubectl'  
-  args: ['apply', '-f', 'deployment.yaml']  
-  env:  
-    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'  
-    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'  
-    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'  
+- name: 'gcr.io/cloud-builders/kubectl'
+  args: ['apply', '-f', 'deployment.yaml']
+  env:
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+    - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
 
-images:  
-- 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}'  
+images:
+- 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}'
 
-options:  
+options:
   logging: 'CLOUD_LOGGING_ONLY'
 
 
