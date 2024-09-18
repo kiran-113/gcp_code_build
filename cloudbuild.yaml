@@ -53,6 +53,9 @@ steps:
 images:
 - 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:$TAG_NAME'
 
+options:
+  logging: 'CLOUD_LOGGING_ONLY'
+
 
 
 # us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a
