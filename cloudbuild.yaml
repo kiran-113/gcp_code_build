@@ -2,14 +2,17 @@ steps:
 - name: 'gcr.io/cloud-builders/mvn'  
   args: ['clean', 'install']  
 
+- name: 'bash'  
+  entrypoint: 'bash'  
+  args:  
+    - '-c'  
+    - |  
+      . /workspace/tag.sh  
+
 - name: 'gcr.io/cloud-builders/docker'  
-  env:  
-    - '. /workspace/tag.sh'  
   args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}', '.']  
 
 - name: 'gcr.io/cloud-builders/docker'  
-  env:  
-    - '. /workspace/tag.sh'  
   args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}']  
 
 - name: 'bash'  
