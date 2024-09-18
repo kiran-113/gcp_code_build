@@ -18,8 +18,8 @@ steps:
     - '-c'
     - |
       pwd
-      _K8S_IMAGE="${_K8S_IMAGE}"
-      sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$_K8S_IMAGE"'|' deployment.yaml
+      IMAGE="us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}"
+      sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|'"$IMAGE"'|' deployment.yaml
 
 - name: 'gcr.io/cloud-builders/kubectl'
   args: ['apply', '-f', 'persistentvolume.yaml']
@@ -42,4 +42,4 @@ options:
   logging: 'CLOUD_LOGGING_ONLY'
 
 substitutions:
-  K8S_IMAGE: 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}'
+  #K8S_IMAGE: 'us-central1-docker.pkg.dev/my-first-gcp-instance-323404/a18092024a/validation-service-image:${SHORT_SHA}'
