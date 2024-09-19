@@ -1,18 +1,9 @@
-FROM maven:3.8.5-openjdk-17 as build  
-WORKDIR /app  
-COPY . /app  
-RUN mvn clean package  
-RUN ls -l target  
-RUN ls -l target/validation-service.jar.original  
 
-FROM openjdk:17  
-WORKDIR /app  
-COPY --from=build /app/target/validation-service.jar.original /app/validation-service.jar  
-EXPOSE 80  
+FROM openjdk:17
+EXPOSE 80
+ARG JAR_FILE=JAR_FILE_MUST_BE_SPECIFIED_AS_BUILD_ARG
+COPY ${JAR_FILE} validation-service.jar
+#ADD target/validation-service.jar validation-service.jar
 ENTRYPOINT ["java", "-jar", "validation-service.jar"]
 
 
-# FROM openjdk:17
-# EXPOSE 80
-# ADD target/validation-service.jar validation-service.jar
-# ENTRYPOINT ["java", "-jar", "validation-service.jar"]

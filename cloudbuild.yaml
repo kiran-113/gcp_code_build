@@ -2,8 +2,18 @@ steps:
 # - name: 'gcr.io/cloud-builders/mvn'
 #   args: ['clean', 'install']
 
+- name: maven:3-eclipse-temurin-17-alpine
+  entrypoint: mvn
+  args: ["test"]
+- name: maven:3-eclipse-temurin-17-alpine
+  entrypoint: mvn
+  args: ["package", "-Dmaven.test.skip=true"]
+# - name: gcr.io/cloud-builders/docker
+#   args: ["build", "-t", "us-central1-docker.pkg.dev/$PROJECT_ID/$_REPO_NAME/hellospring", "--build-arg=JAR_FILE=target/validation-service-image-1.0.0.jar", "."]
+
+
 - name: 'gcr.io/cloud-builders/docker' 
-  args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}', '--build-arg=JAR_FILE=target/validation-service-image-1.0.0.jar' '.']
 
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'us-central1-docker.pkg.dev/${PROJECT_ID}/a18092024a/validation-service-image:${SHORT_SHA}']
