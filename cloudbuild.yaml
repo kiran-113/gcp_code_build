@@ -1,57 +1,116 @@
-env:
-  - _ARTIFACT_REGISTRY_REPO=python-app
+substitutions:  
+  _ARTIFACT_REGISTRY_REPO: python-app  
 
-steps:
-  # Install dependencies
-  - name: python
-    entrypoint: pip
-    args: ["install", "-r", "requirements.txt", "--user"]
-  # [END cloudbuild_python_dependencies_yaml]
+steps:  
+  # Install dependencies  
+  - name: python  
+    entrypoint: pip  
+    args: ["install", "-r", "requirements.txt", "--user"]  
+  # [END cloudbuild_python_dependencies_yaml]  
 
-  # [START cloudbuild_python_tests_yaml]
-  # Run unit tests
-  - name: python
-    entrypoint: python
-    args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"] 
-  # [END cloudbuild_python_tests_yaml]
+  # [START cloudbuild_python_tests_yaml]  
+  # Run unit tests  
+  - name: python  
+    entrypoint: python  
+    args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"]   
+  # [END cloudbuild_python_tests_yaml]  
 
-  # [START cloudbuild_python_image_yaml]
-  # Docker Build
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 
-           'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}', '.']
-  # [END cloudbuild_python_image_yaml]
+  # [START cloudbuild_python_image_yaml]  
+  # Docker Build  
+  - name: 'gcr.io/cloud-builders/docker'  
+    args: ['build', '-t',   
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}', '.']  
+  # [END cloudbuild_python_image_yaml]  
 
-  # [START cloudbuild_python_push_yaml]
-  # Docker push to Google Artifact Registry
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push',  'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}']
-  # [END cloudbuild_python_push_yaml]
+  # [START cloudbuild_python_push_yaml]  
+  # Docker push to Google Artifact Registry  
+  - name: 'gcr.io/cloud-builders/docker'  
+    args: ['push',  'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}']  
+  # [END cloudbuild_python_push_yaml]  
   
-  - name: 'bash'
-    entrypoint: 'bash'
-    args:
-      - '-c' 
-      - |
-        pwd
-        sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}|' deployment.yaml
+  - name: 'bash'  
+    entrypoint: 'bash'  
+    args:  
+      - '-c'   
+      - |  
+        pwd  
+        sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}|' deployment.yaml  
 
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'services.yaml']
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
-      - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
+  - name: 'gcr.io/cloud-builders/kubectl'  
+    args: ['apply', '-f', 'services.yaml']  
+    env:  
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'  
+      - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'  
+      - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'  
 
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args: ['apply', '-f', 'deployment.yaml']
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
-      - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
+  - name: 'gcr.io/cloud-builders/kubectl'  
+    args: ['apply', '-f', 'deployment.yaml']  
+    env:  
+      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'  
+      - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'  
+      - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'  
 
-images:
-  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}'
+images:  
+  - 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}'  
 
-options:
+options:  
   logging: 'CLOUD_LOGGING_ONLY'
+
+
+# env:
+#   - _ARTIFACT_REGISTRY_REPO=python-app
+
+# steps:
+#   # Install dependencies
+#   - name: python
+#     entrypoint: pip
+#     args: ["install", "-r", "requirements.txt", "--user"]
+#   # [END cloudbuild_python_dependencies_yaml]
+
+#   # [START cloudbuild_python_tests_yaml]
+#   # Run unit tests
+#   - name: python
+#     entrypoint: python
+#     args: ["-m", "pytest", "--junitxml=${SHORT_SHA}_test_log.xml"] 
+#   # [END cloudbuild_python_tests_yaml]
+
+#   # [START cloudbuild_python_image_yaml]
+#   # Docker Build
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['build', '-t', 
+#            'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}', '.']
+#   # [END cloudbuild_python_image_yaml]
+
+#   # [START cloudbuild_python_push_yaml]
+#   # Docker push to Google Artifact Registry
+#   - name: 'gcr.io/cloud-builders/docker'
+#     args: ['push',  'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}']
+#   # [END cloudbuild_python_push_yaml]
+  
+#   - name: 'bash'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c' 
+#       - |
+#         pwd
+#         sed -i 's|LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE|us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}|' deployment.yaml
+
+#   - name: 'gcr.io/cloud-builders/kubectl'
+#     args: ['apply', '-f', 'services.yaml']
+#     env:
+#       - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+#       - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+#       - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
+
+#   - name: 'gcr.io/cloud-builders/kubectl'
+#     args: ['apply', '-f', 'deployment.yaml']
+#     env:
+#       - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+#       - 'CLOUDSDK_CONTAINER_CLUSTER=gke-test-1'
+#       - 'CLOUDSDK_CORE_PROJECT=my-first-gcp-instance-323404'
+
+# images:
+#   - 'us-central1-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO}/myimage:${SHORT_SHA}'
+
+# options:
+#   logging: 'CLOUD_LOGGING_ONLY'
