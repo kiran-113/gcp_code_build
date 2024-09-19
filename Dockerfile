@@ -1,5 +1,6 @@
 FROM openjdk:17 as build  
 WORKDIR /app  
+RUN apt-get update && apt-get install -y maven  
 COPY . /app  
 RUN mvn clean package  
 
