@@ -1,13 +1,12 @@
-FROM openjdk:17 as build  
-WORKDIR /app  
-RUN apk add --no-cache maven  
-COPY . /app  
-RUN mvn clean package  
+FROM maven:3.8.5-openjdk-17 as build
+WORKDIR /app
+COPY . /app 
+RUN mvn clean package
 
-FROM openjdk:17  
-WORKDIR /app  
-COPY --from=build /app/target/validation-service-0.0.1-SNAPSHOT.jar /app/validation-service.jar  
-EXPOSE 80  
+FROM openjdk:17
+WORKDIR /app
+COPY --from=build /app/target/validation-service-0.0.1-SNAPSHOT.jar /app/validation-service.jar
+EXPOSE 80
 ENTRYPOINT ["java", "-jar", "validation-service.jar"]
 
 
