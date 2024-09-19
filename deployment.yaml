@@ -21,7 +21,7 @@ spec:
         app: validation-service
     spec:
       containers:
-      - image: northamerica-northeast1-docker.pkg.dev/csci5409-k8-417419/csci5409-k8-registry/validation-service-image:v1
+      - image: LOCATION-docker.pkg.dev/PROJECT_ID/REPOSITORY/IMAGE
         imagePullPolicy: Always
         name: validation-service-container
         ports:
